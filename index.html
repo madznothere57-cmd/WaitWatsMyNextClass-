@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MSA Schedule</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f4f2;
+      --bg-tertiary: #ece9e4;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b7280;
+      --text-tertiary: #9ca3af;
+      --border-light: rgba(0,0,0,0.08);
+      --border-med: rgba(0,0,0,0.15);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      /* MSA colors */
+      --maroon: #6B1A2A;
+      --maroon-light: #8B2A3E;
+      --maroon-bg: rgba(107,26,42,0.08);
+      --gold: #C8972A;
+      --gold-light: #E4B84A;
+      --gold-bg: rgba(200,151,42,0.12);
+      --grey: #6B7280;
+      --accent: #C8972A;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1c1a1b;
+        --bg-secondary: #2a2528;
+        --bg-tertiary: #352f32;
+        --text-primary: #f2f0ee;
+        --text-secondary: #aeaeb2;
+        --text-tertiary: #636366;
+        --border-light: rgba(255,255,255,0.08);
+        --border-med: rgba(255,255,255,0.15);
+        --maroon-bg: rgba(107,26,42,0.25);
+        --gold-bg: rgba(200,151,42,0.18);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-tertiary); color: var(--text-primary); min-height: 100vh; padding: 0; }
+
+    /* Maroon top bar */
+    .topbar { background: var(--maroon); padding: 0.85rem 1rem 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-title { display: flex; align-items: center; gap: 8px; color: white; font-size: 17px; font-weight: 700; letter-spacing: 0.01em; }
+    .topbar-title i { color: var(--gold-light); font-size: 20px; }
+    .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 400; margin-left: 2px; }
+    .ver { font-size: 10px; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 99px; border: 0.5px solid rgba(255,255,255,0.15); }
+
+    .app { max-width: 480px; margin: 0 auto; padding: 1rem 1rem 2rem; }
+
+    /* Nav */
+    .ntabs { display: flex; gap: 4px; background: var(--bg-secondary); padding: 4px; border-radius: var(--radius-md); margin-bottom: 1rem; }
+    .ntab { flex: 1; padding: 7px 4px; border: none; background: none; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text-secondary); transition: all 0.15s; font-family: inherit; }
+    .ntab.on { background: var(--bg-primary); color: var(--maroon); font-weight: 600; border: 0.5px solid var(--border-light); }
+    .tc { display: none; } .tc.on { display: block; }
+
+    /* Hero */
+    .hero { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
+    .hero-top { background: var(--maroon); padding: 1rem 1.25rem 1rem; }
+    .dbadge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ba { background: var(--gold-bg); color: var(--gold-light); border: 0.5px solid rgba(228,184,74,0.3); }
+    .bb { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border: 0.5px solid rgba(255,255,255,0.2); }
+    .bs { background: rgba(255,255,255,0.15); color: white; border: 0.5px solid rgba(255,255,255,0.25); }
+    .ddate { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 0.15rem; }
+    .dname { font-size: 20px; font-weight: 700; color: white; }
+    .hero-body { padding: 1rem 1.25rem; }
+
+    /* Countdown cards */
+    .cds { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+    .cdc { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 0.75rem 1rem; border: 0.5px solid var(--border-light); }
+    .cdl { font-size: 10px; color: var(--text-tertiary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .cdv { font-size: 22px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1; }
+    .cds2 { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+    .cds2 strong { color: var(--text-primary); font-weight: 600; }
+
+    /* Next up banner */
+    .nextup { background: var(--gold-bg); border: 0.5px solid rgba(200,151,42,0.25); border-radius: var(--radius-md); padding: 0.6rem 1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+    .nextup i { color: var(--gold); font-size: 15px; flex-shrink: 0; }
+    .nextup-text { font-size: 13px; color: var(--text-primary); }
+    .nextup-text span { font-weight: 600; }
+
+    /* Progress */
+    .prog-section { }
+    .prog-labels { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .prog-title { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .prog-pct { font-size: 11px; color: var(--gold); font-weight: 700; }
+    .pbar { height: 5px; background: var(--border-light); border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
+    .pfill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--maroon), var(--gold)); transition: width 0.5s; }
+    .prog-dates { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-tertiary); }
+    .days-left { text-align: center; margin-top: 6px; font-size: 12px; color: var(--text-secondary); }
+    .days-left strong { color: var(--maroon); font-weight: 700; font-size: 14px; }
+
+    /* Section title */
+    .sth { font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.5rem; }
+    .slist { display: flex; flex-direction: column; gap: 6px; }
+
+    /* Class card */
+    .ccard { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-md); padding: 0.75rem 1rem; display: flex; align-items: center; gap: 12px; }
+    .ccard.now { border-width: 1.5px; }
+    .csw { width: 38px; height: 38px; border-radius: var(--radius-md); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .cmeta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; display: flex; gap: 10px; align-items: center; }
+    .now-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 99px; background: var(--maroon-bg); color: var(--maroon); text-transform: uppercase; letter-spacing: 0.04em; }
+    @media (prefers-color-scheme: dark) { .now-badge { background: rgba(139,42,62,0.35); color: #F4A0B0; } }
+
+    .lcard { background: var(--bg-secondary); border: 0.5px dashed var(--border-med); border-radius: var(--radius-md); padding: 0.75rem 1rem; display: flex; align-items: center; gap: 10px; color: var(--text-secondary); }
+
+    /* Days off */
+    .docard { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-md); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .dopill { font-size: 11px; padding: 3px 8px; border-radius: 99px; background: var(--maroon-bg); color: var(--maroon); white-space: nowrap; font-weight: 600; }
+    @media (prefers-color-scheme: dark) { .dopill { background: rgba(139,42,62,0.3); color: #F4A0B0; } }
+
+    /* Settings */
+    .ssec { margin-bottom: 1.25rem; }
+    .scard { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); overflow: hidden; }
+    .srow { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 0.5px solid var(--border-light); gap: 12px; }
+    .srow:last-child { border-bottom: none; }
+    .slbl { font-size: 14px; color: var(--text-primary); }
+    .ssub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .tog { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .tog input { opacity: 0; width: 0; height: 0; }
+    .tsl { position: absolute; inset: 0; background: var(--border-med); border-radius: 99px; cursor: pointer; transition: background 0.2s; }
+    .tog input:checked + .tsl { background: var(--maroon); }
+    .tsl::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.2s; }
+    .tog input:checked + .tsl::before { transform: translateX(18px); }
+
+    /* Inputs — font-size 16px prevents iOS zoom */
+    select, input[type=text], input[type=time], input[type=date] {
+      background: var(--bg-secondary);
+      border: 0.5px solid var(--border-med);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      font-size: 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type=text] { width: 100%; }
+    input[type=text]:focus, input[type=time]:focus, input[type=date]:focus { border-color: var(--maroon); }
+
+    .edit-card { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 8px; }
+    .edit-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+    .edit-swatch { width: 38px; height: 38px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden; cursor: pointer; border: 0.5px solid var(--border-light); }
+    .edit-swatch input[type=color] { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); opacity: 0; cursor: pointer; }
+    .edit-field { margin-bottom: 8px; }
+    .edit-label { font-size: 11px; color: var(--text-tertiary); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .pdots { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+    .pdot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: transform 0.1s; }
+    .pdot:hover { transform: scale(1.15); }
+    .pdot.on { border-color: var(--text-primary); }
+
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-md); border: 0.5px solid var(--border-med); background: none; font-size: 14px; color: var(--text-primary); cursor: pointer; font-family: inherit; transition: background 0.15s; }
+    .btn:hover { background: var(--bg-secondary); }
+    .btn-danger { color: #A32D2D; border-color: rgba(163,45,45,0.3); }
+    .btn-danger:hover { background: #FCEBEB; }
+    .btn-primary { background: var(--maroon); color: white; border-color: var(--maroon); }
+    .btn-primary:hover { background: var(--maroon-light); }
+    @media (prefers-color-scheme: dark) { .btn-danger:hover { background: rgba(163,45,45,0.2); } }
+
+    .stabs { display: flex; gap: 4px; margin-bottom: 1rem; }
+    .stab { padding: 7px 20px; border: 0.5px solid var(--border-light); background: none; border-radius: var(--radius-md); font-size: 13px; cursor: pointer; color: var(--text-secondary); transition: all 0.15s; font-family: inherit; }
+    .stab.on { background: var(--maroon); color: white; font-weight: 600; border-color: var(--maroon); }
+
+    .add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 0.75rem; border: 0.5px dashed var(--border-med); border-radius: var(--radius-md); background: none; color: var(--text-secondary); font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; margin-top: 6px; }
+    .add-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+    .empty { text-align: center; padding: 2rem 1rem; color: var(--text-tertiary); font-size: 14px; }
+    .icon-pick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .icon-opt { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1.5px solid transparent; background: var(--bg-secondary); font-size: 17px; color: var(--text-secondary); transition: all 0.15s; }
+    .icon-opt:hover { color: var(--text-primary); }
+    .icon-opt.on { border-color: var(--maroon); color: var(--maroon); }
+  </style>
+</head>
+<body>
+
+<!-- Maroon header -->
+<div class="topbar">
+  <div class="topbar-title">
+    <i class="ti ti-calendar-filled"></i>
+    MSA Schedule
+    <span class="topbar-sub">by madznothere57</span>
+  </div>
+  <span class="ver">v2.1</span>
+</div>
+
+<div class="app">
+  <div class="ntabs">
+    <button class="ntab on" onclick="sw('today')">Today</button>
+    <button class="ntab" onclick="sw('schedule')">Schedule</button>
+    <button class="ntab" onclick="sw('daysoff')">Days off</button>
+    <button class="ntab" onclick="sw('settings')">Settings</button>
+  </div>
+
+  <!-- TODAY -->
+  <div id="t-today" class="tc on">
+    <div class="hero">
+      <div class="hero-top">
+        <div id="dbadge" class="dbadge ba"><i class="ti ti-calendar-event"></i><span id="dbtext">A Day</span></div>
+        <div class="ddate" id="ddate"></div>
+        <div class="dname" id="dname"></div>
+      </div>
+      <div class="hero-body">
+        <div class="cds">
+          <div class="cdc">
+            <div class="cdl">⏱ Class ends in</div>
+            <div class="cdv" id="cc">—</div>
+            <div class="cds2" id="ccs">No class right now</div>
+          </div>
+          <div class="cdc">
+            <div class="cdl">🏫 School ends in</div>
+            <div class="cdv" id="sc">—</div>
+            <div class="cds2" id="scs"></div>
+          </div>
+        </div>
+        <div class="nextup" id="nextupBanner" style="display:none">
+          <i class="ti ti-arrow-right"></i>
+          <div class="nextup-text" id="nextupText"></div>
+        </div>
+        <div class="prog-section">
+          <div class="prog-labels">
+            <span class="prog-title">School year progress</span>
+            <span class="prog-pct" id="ypct"></span>
+          </div>
+          <div class="pbar"><div class="pfill" id="yp" style="width:0%"></div></div>
+          <div class="prog-dates"><span id="ys"></span><span id="ye"></span></div>
+          <div class="days-left" id="daysLeft"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sth">Today's classes</div>
+    <div class="slist" id="todaySched"></div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div id="t-schedule" class="tc">
+    <div class="stabs">
+      <button class="stab on" id="tabA" onclick="swSched('A')">A Day</button>
+      <button class="stab" id="tabB" onclick="swSched('B')">B Day</button>
+    </div>
+    <div class="slist" id="fullSched"></div>
+  </div>
+
+  <!-- DAYS OFF -->
+  <div id="t-daysoff" class="tc">
+    <div class="slist" id="dolist"></div>
+    <button class="add-btn" onclick="toggleDOForm()"><i class="ti ti-plus"></i> Add day off</button>
+    <div id="addDOForm" style="display:none;margin-top:8px">
+      <div class="edit-card">
+        <div class="edit-field"><div class="edit-label">Name</div><input type="text" id="doName" placeholder="e.g. Spring Break" /></div>
+        <div class="edit-row">
+          <div><div class="edit-label">Date</div><input type="date" id="doDate" /></div>
+          <div><div class="edit-label">Type</div>
+            <select id="doType" style="width:100%">
+              <option>No school</option><option>Day off</option><option>Early release</option><option>End of year</option><option>Holiday</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveDO()"><i class="ti ti-check"></i> Save</button>
+          <button class="btn" onclick="toggleDOForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="t-settings" class="tc">
+    <div class="ssec">
+      <div class="sth">Display</div>
+      <div class="scard">
+        <div class="srow"><div class="slbl">Show room numbers</div><label class="tog"><input type="checkbox" id="tr" onchange="savePref()"><span class="tsl"></span></label></div>
+        <div class="srow"><div class="slbl">24-hour time</div><label class="tog"><input type="checkbox" id="t24" onchange="savePref()"><span class="tsl"></span></label></div>
+        <div class="srow">
+          <div><div class="slbl">Day type override</div><div class="ssub">Force A, B, or assembly</div></div>
+          <select id="dov" onchange="savePref()">
+            <option value="auto">Auto</option><option value="A">A Day</option><option value="B">B Day</option><option value="special">Assembly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="ssec">
+      <div class="sth">School year</div>
+      <div class="scard">
+        <div class="srow"><div class="slbl">First day</div><input type="date" id="schoolStart" onchange="savePref()" style="width:auto" /></div>
+        <div class="srow"><div class="slbl">Last day</div><input type="date" id="schoolEnd" onchange="savePref()" style="width:auto" /></div>
+      </div>
+    </div>
+    <div class="ssec"><div class="sth">A Day classes</div><div id="editA"></div><button class="add-btn" onclick="addClass('A')"><i class="ti ti-plus"></i> Add class</button></div>
+    <div class="ssec"><div class="sth">B Day classes</div><div id="editB"></div><button class="add-btn" onclick="addClass('B')"><i class="ti ti-plus"></i> Add class</button></div>
+  </div>
+</div>
+
+<script>
+const PRESETS=['#6B1A2A','#C8972A','#8B2A3E','#378ADD','#1D9E75','#7F77DD','#D85A30','#D4537E','#639922','#888780'];
+const ICONS=['ti-book','ti-math-function','ti-atom','ti-code','ti-globe','ti-language','ti-palette','ti-run','ti-music','ti-flask','ti-pencil','ti-device-laptop'];
+const MONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const DEF={
+  showRooms:true,use24:false,dayOverride:'auto',
+  schoolStart:'2025-09-02',schoolEnd:'2026-06-05',
+  SA:[
+    {name:'AP English',room:'204',start:'8:00',end:'9:25',color:'#378ADD',icon:'ti-book'},
+    {name:'Calculus AB',room:'118',start:'9:30',end:'10:55',color:'#1D9E75',icon:'ti-math-function'},
+    {name:'Lunch',room:'',start:'10:55',end:'11:30',color:null,icon:null},
+    {name:'Physics',room:'312',start:'11:35',end:'13:00',color:'#7F77DD',icon:'ti-atom'},
+    {name:'Computer Science',room:'Lab B',start:'13:05',end:'14:30',color:'#D85A30',icon:'ti-code'},
+  ],
+  SB:[
+    {name:'US History',room:'207',start:'8:00',end:'9:25',color:'#C8972A',icon:'ti-globe'},
+    {name:'Spanish III',room:'105',start:'9:30',end:'10:55',color:'#D4537E',icon:'ti-language'},
+    {name:'Lunch',room:'',start:'10:55',end:'11:30',color:null,icon:null},
+    {name:'Art & Design',room:'Studio',start:'11:35',end:'13:00',color:'#639922',icon:'ti-palette'},
+    {name:'PE',room:'Gym',start:'13:05',end:'14:30',color:'#888780',icon:'ti-run'},
+  ],
+  daysOff:[
+    {name:'Memorial Day',date:'2026-05-25',type:'No school'},
+    {name:'Last day of school',date:'2026-06-05',type:'End of year'},
+  ]
+};
+
+let S=JSON.parse(localStorage.getItem('msaScheduleV1')||'null')||JSON.parse(JSON.stringify(DEF));
+let sTab='A';
+
+function persist(){localStorage.setItem('msaScheduleV1',JSON.stringify(S));}
+function tm(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function ft(t,u24){if(u24)return t;const[h,m]=t.split(':').map(Number);return`${h%12||12}:${m.toString().padStart(2,'0')} ${h>=12?'PM':'AM'}`;}
+function swBg(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},0.15)`;}
+
+function getDT(){
+  const ov=S.dayOverride;if(ov&&ov!=='auto')return ov;
+  const now=new Date(),ss=new Date(S.schoolStart);
+  let c=0;for(let d=new Date(ss);d<=now;d.setDate(d.getDate()+1))if(d.getDay()>=1&&d.getDay()<=5)c++;
+  return c%2===1?'A':'B';
+}
+function fc(s){if(s<=0)return'—';const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sc.toString().padStart(2,'0')}s`;return`${sc}s`;}
+
+function schoolDaysLeft(){
+  const now=new Date(),se=new Date(S.schoolEnd);
+  let c=0;for(let d=new Date(now);d<=se;d.setDate(d.getDate()+1))if(d.getDay()>=1&&d.getDay()<=5)c++;
+  return Math.max(0,c);
+}
+
+function mkCard(cls,nowM,u24,showR){
+  if(!cls.color){
+    const el=document.createElement('div');el.className='lcard';
+    el.innerHTML=`<i class="ti ti-tools-kitchen-2" style="font-size:18px"></i><div><div style="font-size:14px;font-weight:500;color:var(--text-primary)">Lunch</div><div style="font-size:12px;color:var(--text-secondary)">${ft(cls.start,u24)} – ${ft(cls.end,u24)}</div></div>`;
+    return el;
+  }
+  const sm=tm(cls.start),em=tm(cls.end),isNow=nowM!==null&&nowM>=sm&&nowM<em;
+  const el=document.createElement('div');el.className='ccard'+(isNow?' now':'');
+  if(isNow)el.style.borderColor=cls.color;
+  el.innerHTML=`
+    <div class="csw" style="background:${swBg(cls.color)}"><i class="ti ${cls.icon||'ti-book'}" style="color:${cls.color};font-size:18px"></i></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:6px">
+        ${cls.name}${isNow?'<span class="now-badge">Now</span>':''}
+      </div>
+      <div class="cmeta">
+        <span>${ft(cls.start,u24)} – ${ft(cls.end,u24)}</span>
+        ${showR&&cls.room?`<span style="display:flex;align-items:center;gap:3px"><i class="ti ti-door" style="font-size:12px"></i>${cls.room}</span>`:''}
+      </div>
+    </div>
+    <div style="width:4px;height:36px;border-radius:99px;background:${cls.color};flex-shrink:0"></div>`;
+  return el;
+}
+
+function renderToday(){
+  const now=new Date(),u24=S.use24,showR=S.showRooms,dt=getDT(),sched=dt==='B'?S.SB:S.SA;
+  document.getElementById('ddate').textContent=`${DAYS[now.getDay()]}, ${MONS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  const h=now.getHours();
+  const greet=h<12?'Good morning ☀️':h<17?'Good afternoon 👋':'Good evening 🌙';
+  document.getElementById('dname').textContent=greet;
+
+  const badge=document.getElementById('dbadge'),btxt=document.getElementById('dbtext');
+  if(dt==='special'){badge.className='dbadge bs';btxt.textContent='Assembly Day';}
+  else if(dt==='B'){badge.className='dbadge bb';btxt.textContent='B Day';}
+  else{badge.className='dbadge ba';btxt.textContent='A Day';}
+
+  const nm=now.getHours()*60+now.getMinutes(),ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const cls2=sched.filter(c=>c.color),lc=cls2[cls2.length-1];
+  let cv='—',cs='No class right now',sv='—',ss2='';
+  let nextCls=null;
+
+  if(lc){
+    const ses=tm(lc.end)*60;
+    if(ns<ses){sv=fc(ses-ns);ss2=`Ends at ${ft(lc.end,u24)}`;}
+    else{sv='Done! 🎉';ss2='You\'re free!';}
+  }
+
+  let inClass=false;
+  for(let i=0;i<sched.length;i++){
+    const c=sched[i];if(!c.color)continue;
+    const sm=tm(c.start),em=tm(c.end);
+    if(nm>=sm&&nm<em){cv=fc(em*60-ns);cs=c.name;inClass=true;if(i+1<sched.length){for(let j=i+1;j<sched.length;j++){if(sched[j].color){nextCls=sched[j];break;}}}break;}
+    if(nm<sm){cv=fc(sm*60-ns);cs=`Starts in`;nextCls=c;break;}
+  }
+
+  document.getElementById('cc').textContent=cv;
+  document.getElementById('ccs').textContent=inClass?cs:`${cs}${nextCls?' — '+nextCls.name:''}`;
+
+  // Fix ccs for "until next class" case
+  if(!inClass&&nextCls&&cs==='Starts in'){document.getElementById('ccs').textContent=nextCls.name;}
+  else if(inClass){document.getElementById('ccs').textContent=cs;}
+
+  document.getElementById('sc').textContent=sv;document.getElementById('scs').textContent=ss2;
+
+  // Next up banner
+  const nb=document.getElementById('nextupBanner'),nt=document.getElementById('nextupText');
+  if(nextCls&&inClass){nb.style.display='flex';nt.innerHTML=`Next up: <span>${nextCls.name}</span> at ${ft(nextCls.start,u24)}${showR&&nextCls.room?' · Rm '+nextCls.room:''}`;} 
+  else{nb.style.display='none';}
+
+  // Progress
+  const ss=new Date(S.schoolStart),se=new Date(S.schoolEnd);
+  const total=(se-ss)/86400000,passed=(now-ss)/86400000;
+  const pct=Math.min(100,Math.max(0,Math.round(passed/total*100)));
+  document.getElementById('yp').style.width=pct+'%';
+  document.getElementById('ypct').textContent=pct+'% done';
+  document.getElementById('ys').textContent=`${MONS[ss.getMonth()]} ${ss.getDate()}, ${ss.getFullYear()}`;
+  document.getElementById('ye').textContent=`${MONS[se.getMonth()]} ${se.getDate()}, ${se.getFullYear()}`;
+  const sdl=schoolDaysLeft();
+  document.getElementById('daysLeft').innerHTML=sdl>0?`<strong>${sdl}</strong> school days left`:'Last day has passed!';
+
+  const con=document.getElementById('todaySched');con.innerHTML='';
+  if(!sched.length){con.innerHTML='<div class="empty">No classes yet — add them in Settings</div>';return;}
+  sched.forEach(c=>con.appendChild(mkCard(c,nm,u24,showR)));
+}
+
+function renderFull(type){
+  const sched=type==='B'?S.SB:S.SA,con=document.getElementById('fullSched');con.innerHTML='';
+  if(!sched.length){con.innerHTML='<div class="empty">No classes yet — add them in Settings</div>';return;}
+  sched.forEach(c=>con.appendChild(mkCard(c,null,S.use24,S.showRooms)));
+}
+
+function renderDO(){
+  const now=new Date(),con=document.getElementById('dolist');con.innerHTML='';
+  if(!S.daysOff.length){con.innerHTML='<div class="empty">No days off added yet</div>';return;}
+  [...S.daysOff].sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach((d,i)=>{
+    const dt=new Date(d.date+'T12:00:00'),diff=Math.round((dt-now)/86400000);
+    const el=document.createElement('div');el.className='docard';
+    el.innerHTML=`<div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text-primary);font-weight:500">${d.name}</div><div style="font-size:12px;color:var(--text-secondary)">${MONS[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}</div></div><div style="display:flex;align-items:center;gap:6px">${diff<0?'<span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--bg-secondary);color:var(--text-tertiary)">Past</span>':`<span style="font-size:11px;color:var(--text-secondary)">${diff}d away</span><span class="dopill">${d.type}</span>`}<button onclick="deleteDO(${i})" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:16px;padding:2px 4px"><i class="ti ti-trash"></i></button></div>`;
+    con.appendChild(el);
+  });
+}
+
+function toggleDOForm(){const f=document.getElementById('addDOForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveDO(){
+  const name=document.getElementById('doName').value.trim(),date=document.getElementById('doDate').value,type=document.getElementById('doType').value;
+  if(!name||!date)return;
+  S.daysOff.push({name,date,type});persist();
+  document.getElementById('doName').value='';document.getElementById('doDate').value='';
+  document.getElementById('addDOForm').style.display='none';renderDO();
+}
+function deleteDO(i){S.daysOff.splice(i,1);persist();renderDO();}
+
+function buildEditCards(day){
+  const sched=day==='A'?S.SA:S.SB,con=document.getElementById('edit'+day);con.innerHTML='';
+  sched.forEach((cls,idx)=>{
+    const card=document.createElement('div');card.className='edit-card';
+    if(!cls.color){
+      card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><i class="ti ti-tools-kitchen-2" style="color:var(--text-secondary)"></i><span style="font-size:14px;font-weight:500">Lunch</span></div><button class="btn btn-danger" onclick="delClass('${day}',${idx})" style="padding:5px 8px"><i class="ti ti-trash"></i></button></div><div class="edit-row"><div><div class="edit-label">Start</div><input type="time" value="${toTime24(cls.start)}" onchange="updClass('${day}',${idx},'start',this.value)"/></div><div><div class="edit-label">End</div><input type="time" value="${toTime24(cls.end)}" onchange="updClass('${day}',${idx},'end',this.value)"/></div></div>`;
+      con.appendChild(card);return;
+    }
+    const ph=PRESETS.map(p=>`<div class="pdot${cls.color===p?' on':''}" style="background:${p}" data-c="${p}"></div>`).join('');
+    const iph=ICONS.map(ic=>`<div class="icon-opt${cls.icon===ic?' on':''}" data-ic="${ic}" title="${ic.replace('ti-','')}"><i class="ti ${ic}"></i></div>`).join('');
+    card.innerHTML=`<div class="edit-card-header"><div class="edit-swatch" style="background:${swBg(cls.color)}" id="esw-${day}-${idx}"><i class="ti ${cls.icon||'ti-book'}" id="eic-${day}-${idx}" style="color:${cls.color};font-size:18px"></i><input type="color" value="${cls.color}" onchange="applyCol('${day}',${idx},this.value)"></div><div style="flex:1;min-width:0"><input type="text" value="${cls.name}" placeholder="Class name" onchange="updClass('${day}',${idx},'name',this.value)" style="font-weight:500"/></div><button class="btn btn-danger" onclick="delClass('${day}',${idx})" style="padding:5px 8px"><i class="ti ti-trash"></i></button></div><div class="edit-field"><div class="edit-label">Room</div><input type="text" value="${cls.room||''}" placeholder="Room number" onchange="updClass('${day}',${idx},'room',this.value)"/></div><div class="edit-row"><div><div class="edit-label">Start</div><input type="time" value="${toTime24(cls.start)}" onchange="updClass('${day}',${idx},'start',this.value)"/></div><div><div class="edit-label">End</div><input type="time" value="${toTime24(cls.end)}" onchange="updClass('${day}',${idx},'end',this.value)"/></div></div><div class="edit-label">Color</div><div class="pdots" id="pd-${day}-${idx}">${ph}</div><div class="edit-label" style="margin-top:8px">Icon</div><div class="icon-pick" id="ip-${day}-${idx}">${iph}</div>`;
+    con.appendChild(card);
+    card.querySelector(`#pd-${day}-${idx}`).addEventListener('click',e=>{const d=e.target.closest('.pdot');if(d)applyCol(day,idx,d.dataset.c);});
+    card.querySelector(`#ip-${day}-${idx}`).addEventListener('click',e=>{const d=e.target.closest('.icon-opt');if(d)applyIcon(day,idx,d.dataset.ic);});
+  });
+}
+
+function toTime24(t){const[h,m]=t.split(':').map(Number);return`${h.toString().padStart(2,'0')}:${(m||0).toString().padStart(2,'0')}`;}
+function applyCol(day,idx,hex){
+  const sched=day==='A'?S.SA:S.SB;sched[idx].color=hex;
+  const sw=document.getElementById(`esw-${day}-${idx}`),ic=document.getElementById(`eic-${day}-${idx}`);
+  if(sw)sw.style.background=swBg(hex);if(ic)ic.style.color=hex;
+  const pd=document.getElementById(`pd-${day}-${idx}`);
+  if(pd)pd.querySelectorAll('.pdot').forEach(d=>d.classList.toggle('on',d.dataset.c===hex));
+  persist();renderToday();if(sTab===day)renderFull(day);
+}
+function applyIcon(day,idx,icon){
+  const sched=day==='A'?S.SA:S.SB;sched[idx].icon=icon;
+  const ic=document.getElementById(`eic-${day}-${idx}`);
+  if(ic){ic.className=`ti ${icon}`;ic.style.color=sched[idx].color;}
+  const ip=document.getElementById(`ip-${day}-${idx}`);
+  if(ip)ip.querySelectorAll('.icon-opt').forEach(d=>d.classList.toggle('on',d.dataset.ic===icon));
+  persist();renderToday();if(sTab===day)renderFull(day);
+}
+function updClass(day,idx,field,val){
+  const sched=day==='A'?S.SA:S.SB;
+  if(field==='start'||field==='end'){const p=val.split(':');val=`${parseInt(p[0])}:${p[1]||'00'}`;}
+  sched[idx][field]=val;persist();renderToday();if(sTab===day)renderFull(day);
+}
+function delClass(day,idx){
+  const sched=day==='A'?S.SA:S.SB;sched.splice(idx,1);persist();buildEditCards(day);renderToday();if(sTab===day)renderFull(day);
+}
+function addClass(day){
+  const sched=day==='A'?S.SA:S.SB;
+  sched.push({name:'New Class',room:'',start:'8:00',end:'9:00',color:PRESETS[sched.filter(c=>c.color).length%PRESETS.length],icon:'ti-book'});
+  persist();buildEditCards(day);
+}
+function savePref(){
+  S.showRooms=document.getElementById('tr').checked;
+  S.use24=document.getElementById('t24').checked;
+  S.dayOverride=document.getElementById('dov').value;
+  S.schoolStart=document.getElementById('schoolStart').value||S.schoolStart;
+  S.schoolEnd=document.getElementById('schoolEnd').value||S.schoolEnd;
+  persist();renderToday();if(sTab)renderFull(sTab);
+}
+function sw(name){
+  const names=['today','schedule','daysoff','settings'];
+  document.querySelectorAll('.ntab').forEach((t,i)=>t.classList.toggle('on',names[i]===name));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  document.getElementById('t-'+name).classList.add('on');
+  if(name==='schedule')renderFull(sTab);
+  if(name==='daysoff')renderDO();
+  if(name==='settings'){
+    document.getElementById('tr').checked=S.showRooms;
+    document.getElementById('t24').checked=S.use24;
+    document.getElementById('dov').value=S.dayOverride;
+    document.getElementById('schoolStart').value=S.schoolStart;
+    document.getElementById('schoolEnd').value=S.schoolEnd;
+    buildEditCards('A');buildEditCards('B');
+  }
+}
+function swSched(type){
+  sTab=type;
+  document.getElementById('tabA').classList.toggle('on',type==='A');
+  document.getElementById('tabB').classList.toggle('on',type==='B');
+  renderFull(type);
+}
+
+renderToday();
+setInterval(renderToday,1000);
+</script>
+</body>
+</html>
